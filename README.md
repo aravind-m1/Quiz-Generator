@@ -161,7 +161,7 @@ Quiz-Generator/
 
 ```bash
 # Clone the repository
-git clone https://github.com/Aravind-Marripudi/Quiz-Generator.git
+git clone https://github.com/aravind-m1/Quiz-Generator.git
 cd Quiz-Generator
 
 # Create and activate virtual environment
