@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizForge AI — Intelligent Quiz Generator</title>
+    <meta name="description" content="State-of-the-art AI-powered quiz question generation from any course content. Upload text or PDFs and get instant, high-quality quiz questions.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">QuizForge<span class="logo-ai">AI</span></span>
+            </a>
+            <div class="nav-links">
+                <a href="#generator" class="nav-link">Generator</a>
+                <a href="#how-it-works" class="nav-link">How It Works</a>
+                <a href="#features" class="nav-link">Features</a>
+            </div>
+            <div class="nav-status" id="apiStatus">
+                <span class="status-dot"></span>
+                <span class="status-text">Checking...</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero" id="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="badge-icon">🧠</span>
+                <span>Powered by FLAN-T5 + RAG Pipeline</span>
+            </div>
+            <h1 class="hero-title">
+                Generate <span class="gradient-text">Intelligent Quiz</span><br>
+                Questions Instantly
+            </h1>
+            <p class="hero-subtitle">
+                Paste your course content or upload a PDF — our AI generates high-quality,
+                difficulty-controlled quiz questions with explanations, validated for accuracy.
+            </p>
+            <div class="hero-actions">
+                <a href="#generator" class="btn btn-primary btn-lg">
+                    <span>Start Generating</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+                <a href="#how-it-works" class="btn btn-ghost btn-lg">
+                    <span>Learn More</span>
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-value">5</span>
+                    <span class="stat-label">Question Types</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-value">3</span>
+                    <span class="stat-label">Difficulty Levels</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-value">4-Layer</span>
+                    <span class="stat-label">Validation</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Generator Section -->
+    <section class="section" id="generator">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Quiz Generator</span>
+                <h2 class="section-title">Create Your Quiz</h2>
+                <p class="section-desc">Paste lesson content or upload a document to generate quiz questions.</p>
+            </div>
+
+            <div class="generator-layout">
+                <!-- Input Panel -->
+                <div class="panel panel-input" id="inputPanel">
+                    <div class="panel-header">
+                        <h3 class="panel-title">
+                            <span class="panel-icon">📝</span>
+                            Input Content
+                        </h3>
+                        <div class="input-tabs">
+                            <button class="tab-btn active" data-tab="text" id="tabText">Text Input</button>
+                            <button class="tab-btn" data-tab="pdf" id="tabPdf">PDF Upload</button>
+                        </div>
+                    </div>
+
+                    <!-- Text Input Tab -->
+                    <div class="tab-content active" id="textTab">
+                        <div class="form-group">
+                            <label class="form-label" for="contentInput">Course / Lesson Content</label>
+                            <textarea
+                                id="contentInput"
+                                class="form-textarea"
+                                placeholder="Paste your lesson content, textbook chapter, or study notes here...
+
+Example: Natural language processing (NLP) is a subfield of linguistics, computer science, and artificial intelligence concerned with the interactions between computers and human language, in particular how to program computers to process and analyze large amounts of natural language data..."
+                                rows="10"
+                            ></textarea>
+                            <div class="char-count"><span id="charCount">0</span> characters</div>
+                        </div>
+                    </div>
+
+                    <!-- PDF Upload Tab -->
+                    <div class="tab-content" id="pdfTab">
+                        <div class="upload-zone" id="uploadZone">
+                            <div class="upload-icon">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            </div>
+                            <p class="upload-text">Drag & drop your PDF here</p>
+                            <p class="upload-subtext">or click to browse files</p>
+                            <input type="file" id="pdfInput" accept=".pdf,.txt,.md" hidden>
+                            <div class="upload-file-info" id="fileInfo" style="display:none">
+                                <span class="file-icon">📄</span>
+                                <span class="file-name" id="fileName"></span>
+                                <button class="file-remove" id="fileRemove">&times;</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="controls-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="topicInput">Topic (optional)</label>
+                            <input type="text" id="topicInput" class="form-input" placeholder="e.g., Natural Language Processing">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="numQuestions">Number of Questions</label>
+                            <div class="range-wrapper">
+                                <input type="range" id="numQuestions" class="form-range" min="1" max="20" value="5">
+                                <span class="range-value" id="numQuestionsValue">5</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="difficulty">Difficulty Level</label>
+                            <select id="difficulty" class="form-select">
+                                <option value="">Auto (Mixed)</option>
+                                <option value="easy">🟢 Easy — Recall & Understand</option>
+                                <option value="medium">🟡 Medium — Apply & Analyze</option>
+                                <option value="hard">🔴 Hard — Evaluate & Create</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Question Types</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="MCQ" checked class="type-checkbox"> MCQ
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="TrueFalse" checked class="type-checkbox"> True/False
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="FillInTheBlank" class="type-checkbox"> Fill in Blank
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="ShortAnswer" class="type-checkbox"> Short Answer
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="AssertionReason" class="type-checkbox"> Assertion-Reason
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary btn-block" id="generateBtn">
+                        <span class="btn-content">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            <span>Generate Quiz</span>
+                        </span>
+                        <span class="btn-loading" style="display:none">
+                            <span class="spinner"></span>
+                            <span>Generating...</span>
+                        </span>
+                    </button>
+                </div>
+
+                <!-- Output Panel -->
+                <div class="panel panel-output" id="outputPanel">
+                    <div class="panel-header">
+                        <h3 class="panel-title">
+                            <span class="panel-icon">📋</span>
+                            Generated Quiz
+                        </h3>
+                        <div class="panel-actions" id="outputActions" style="display:none">
+                            <button class="btn btn-sm btn-outline" id="copyJsonBtn" title="Copy JSON">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                <span>Copy JSON</span>
+                            </button>
+                            <button class="btn btn-sm btn-outline" id="downloadBtn" title="Download">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                <span>Download</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div class="empty-state" id="emptyState">
+                        <div class="empty-icon">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        </div>
+                        <p class="empty-title">No quiz generated yet</p>
+                        <p class="empty-desc">Enter your content and click "Generate Quiz" to see results here.</p>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div class="loading-state" id="loadingState" style="display:none">
+                        <div class="loading-animation">
+                            <div class="loading-brain">🧠</div>
+                            <div class="loading-pulse"></div>
+                        </div>
+                        <p class="loading-title">Generating your quiz...</p>
+                        <div class="loading-steps">
+                            <div class="loading-step" id="step1">
+                                <span class="step-dot"></span>
+                                <span>Parsing content & chunking...</span>
+                            </div>
+                            <div class="loading-step" id="step2">
+                                <span class="step-dot"></span>
+                                <span>Extracting key concepts...</span>
+                            </div>
+                            <div class="loading-step" id="step3">
+                                <span class="step-dot"></span>
+                                <span>Building vector index...</span>
+                            </div>
+                            <div class="loading-step" id="step4">
+                                <span class="step-dot"></span>
+                                <span>Generating questions with LLM...</span>
+                            </div>
+                            <div class="loading-step" id="step5">
+                                <span class="step-dot"></span>
+                                <span>Validating & filtering...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results -->
+                    <div class="results-container" id="resultsContainer" style="display:none">
+                        <!-- Metadata bar -->
+                        <div class="results-meta" id="resultsMeta"></div>
+                        <!-- Question cards -->
+                        <div class="questions-list" id="questionsList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section section-dark" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Architecture</span>
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-desc">An 8-stage AI pipeline from raw content to validated quiz questions.</p>
+            </div>
+            <div class="pipeline-grid">
+                <div class="pipeline-card" style="--delay: 0.1s">
+                    <div class="pipeline-number">01</div>
+                    <div class="pipeline-icon">📄</div>
+                    <h4>Content Ingestion</h4>
+                    <p>Parse PDFs, text files, or raw content using PyMuPDF with intelligent structure detection.</p>
+                </div>
+                <div class="pipeline-card" style="--delay: 0.2s">
+                    <div class="pipeline-number">02</div>
+                    <div class="pipeline-icon">✂️</div>
+                    <h4>Semantic Chunking</h4>
+                    <p>Split text into overlapping chunks respecting section boundaries and concept coherence.</p>
+                </div>
+                <div class="pipeline-card" style="--delay: 0.3s">
+                    <div class="pipeline-number">03</div>
+                    <div class="pipeline-icon">🔑</div>
+                    <h4>Concept Extraction</h4>
+                    <p>Extract keyphrases and entities using KeyBERT + spaCy NER for targeted question focus.</p>
+                </div>
+                <div class="pipeline-card" style="--delay: 0.4s">
+                    <div class="pipeline-number">04</div>
+                    <div class="pipeline-icon">🗄️</div>
+                    <h4>FAISS Indexing</h4>
+                    <p>Build a vector database of chunks for retrieval-augmented generation (RAG).</p>
+                </div>
+                <div class="pipeline-card" style="--delay: 0.5s">
+                    <div class="pipeline-number">05</div>
+                    <div class="pipeline-icon">🤖</div>
+                    <h4>LLM Generation</h4>
+                    <p>Generate questions using FLAN-T5 with Bloom's Taxonomy-guided prompting for difficulty control.</p>
+                </div>
+                <div class="pipeline-card" style="--delay: 0.6s">
+                    <div class="pipeline-number">06</div>
+                    <div class="pipeline-icon">🎯</div>
+                    <h4>Distractor Gen</h4>
+                    <p>Create plausible wrong options using LLM + semantic similarity for high-quality MCQs.</p>
+                </div>
+                <div class="pipeline-card" style="--delay: 0.7s">
+                    <div class="pipeline-number">07</div>
+                    <div class="pipeline-icon">✅</div>
+                    <h4>NLI Validation</h4>
+                    <p>Verify factual grounding with DeBERTa NLI, grammar checking, and structural validation.</p>
+                </div>
+                <div class="pipeline-card" style="--delay: 0.8s">
+                    <div class="pipeline-number">08</div>
+                    <div class="pipeline-icon">📊</div>
+                    <h4>Output Formatting</h4>
+                    <p>Structure validated questions as JSON with metadata, explanations, and source context.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="section" id="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Capabilities</span>
+                <h2 class="section-title">Key Features</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card feature-highlight">
+                    <div class="feature-icon">🎓</div>
+                    <h4>5 Question Types</h4>
+                    <p>MCQ, True/False, Fill-in-the-Blank, Short Answer, and Assertion-Reason questions.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h4>Bloom's Taxonomy</h4>
+                    <p>Difficulty mapped to cognitive levels: Remember → Understand → Apply → Analyze → Evaluate → Create.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h4>Zero Hallucination</h4>
+                    <p>NLI entailment validation ensures every answer is grounded in the source content.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📖</div>
+                    <h4>Explanations</h4>
+                    <p>Every question comes with a source-backed explanation referencing the original text.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔀</div>
+                    <h4>Diversity Engine</h4>
+                    <p>Cosine similarity-based deduplication ensures varied questions without repetition.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📄</div>
+                    <h4>PDF Support</h4>
+                    <p>Upload textbooks and notes directly — the system parses, chunks, and generates automatically.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-icon">⚡</span>
+                    <span class="logo-text">QuizForge<span class="logo-ai">AI</span></span>
+                </div>
+                <p class="footer-text">State-of-the-art Quiz Question Generation • Built with FLAN-T5, FAISS, DeBERTa</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-icon"></span>
+        <span class="toast-message"></span>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

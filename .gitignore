@@ -1,0 +1,46 @@
+# Byte-compiled / optimised
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.env/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Model weights (large files)
+models/qg_finetuned/
+models/qg_lora/
+models/faiss_index/*.faiss
+models/faiss_index/*_meta.json
+*.bin
+*.safetensors
+*.onnx
+
+# Data artefacts
+data/processed/*.json
+data/raw/*.pdf
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temp
+*.tmp
+
+# Generated docs script (keep the PDF)
+generate_docs.py
+test_device.py
+
+# Gemini / AI tooling
+.gemini/
